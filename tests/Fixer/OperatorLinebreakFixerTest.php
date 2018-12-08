@@ -306,10 +306,41 @@ return $foo ?/* Lorem ipsum */:
 switch ($foo) {
     case 1:
         return $isOK ? 1 : -1;
-    case 2:
-        return 100;
+    case ($a ? 2 : 3):
+        return 23;
+    case $b[$a ? 4 : 5]:
+        return 45;
 }
 ',
+        ];
+
+        yield [
+            '<?php
+                $a
+                    ? array_map(
+                        function () {
+                            switch (true) {
+                                case 1:
+                                    return true;
+                            }
+                        },
+                        [1, 2, 3]
+                    )
+                    : false;
+            ',
+            '<?php
+                $a ?
+                    array_map(
+                        function () {
+                            switch (true) {
+                                case 1:
+                                    return true;
+                            }
+                        },
+                        [1, 2, 3]
+                    ) :
+                    false;
+            ',
         ];
     }
 }
